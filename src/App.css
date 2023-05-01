@@ -1,11 +1,29 @@
-error {
-  border: red 1px solid;
-}
+/*.App {*/
+/*  padding: 30px;*/
+/*  display: flex;*/
+/*}*/
 
-.error-message {
-  color: red;
-}
+/*.App > div {*/
+/*  margin-right: 50px;*/
+/*}*/
 
-.is-done {
-  opacity: 0.5;
-}
+/*.error {*/
+/*  border: red 1px solid;*/
+/*}*/
+
+/*.error-message {*/
+/*  color: red;*/
+/*}*/
+
+/*.active-filter {*/
+/*  background-color: aquamarine;*/
+/*}*/
+
+/*.is-done {*/
+/*  opacity: 0.5;*/
+/*  display: block;*/
+/*}*/
+
+/*!*div {*!*/
+/*!*  display: inline-block;*!*/
+/*!*}*!*/
