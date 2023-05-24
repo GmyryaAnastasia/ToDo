@@ -19,6 +19,7 @@ import {
 } from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/state";
+import TodolistWithRedux from "./TodolistWithRedux";
 
 export type FiltersType = 'All' | 'Active' | 'Completed'
 
@@ -68,27 +69,7 @@ function AppWithRedux() {
         const action = addTodolistAC(title);
         dispatch(action);
     }
-    const changeTodolistTitle = (todolistId: string, title: string) => {
-        dispatch(changeTodolistTitleAC(todolistId, title))
-    }
-    const changeStatusTask = (todolistId: string, taskId: string, status: boolean) => {
-        dispatch(changeTaskStatusAC(todolistId, taskId, status))
-    }
-    const addTask = (todolistId: string, title: string) => {
-        dispatch(addTaskAC(todolistId, title))
-    }
-    const changeFilterStatus = (todolistId: string, filter: FiltersType) => {
-        dispatch(changeFilterAC(todolistId, filter))
-    }
-    const changeTitleTask = (todolistId: string, taskId: string, title: string) => {
-        dispatch(changeTitleTaskAC(todolistId, taskId, title))
-    }
-    const removeTasks = (todolistId: string, taskId: string) => {
-        dispatch(removeTaskAC(todolistId, taskId))
-    }
-    const removeTodolist = (todolistId: string) => {
-        dispatch(removeTodolistAC(todolistId))
-    }
+
 
     return (
         <div className="App">
@@ -109,28 +90,23 @@ function AppWithRedux() {
                 <Grid container spacing={5}>
                     {
                         todolists.map(tl => {
-                            let allTodolists = tasks[tl.id]
-                            let taskForTodolist = allTodolists
 
-                            if (tl.filter === 'Active') {
-                                taskForTodolist = allTodolists.filter(f => !f.isDone)
-                            }
-                            if (tl.filter === 'Completed') {
-                                taskForTodolist = allTodolists.filter(f => f.isDone)
-                            }
                             return <Grid item>
                                 <Paper style={{padding: '10px'}}>
-                                    <Todolist title={tl.title}
-                                              todolistId={tl.id}
-                                              filter={tl.filter}
-                                              task={taskForTodolist}
-                                              removeTasks={removeTasks}
-                                              changeFilterStatus={changeFilterStatus}
-                                              addTask={addTask}
-                                              changeStatusTask={changeStatusTask}
-                                              removeTodolist={removeTodolist}
-                                              changeTitleTask={changeTitleTask}
-                                              changeTodolistTitle={changeTodolistTitle}/>
+                                    <TodolistWithRedux
+                                        todolist={tl}
+                                        // title={tl.title}
+                                        //       todolistId={tl.id}
+                                        //       filter={tl.filter}
+                                        //       task={taskForTodolist}
+                                        //       removeTasks={removeTasks}
+                                        //       changeFilterStatus={changeFilterStatus}
+                                        //       addTask={addTask}
+                                        //       changeStatusTask={changeStatusTask}
+                                        //       removeTodolist={removeTodolist}
+                                        //       changeTitleTask={changeTitleTask}
+                                        //       changeTodolistTitle={changeTodolistTitle}
+                                          />
                                 </Paper>
                             </Grid>
                         })
