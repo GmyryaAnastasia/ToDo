@@ -5,9 +5,10 @@ import {
     addTaskAC,
     changeTaskStatusAC,
     changeTitleTaskAC,
-    addTodolistAC
+
 } from "./tasks-reducer";
 import {v1} from "uuid";
+import { addTodolistAC } from "./todolists-reducer";
 
 let todolistId1:string
 let todolistId2:string
