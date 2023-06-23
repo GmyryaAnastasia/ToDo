@@ -3,28 +3,31 @@ import {
     changeFilterAC,
     changeTodolistTitleTC,
     createTodolistTC,
-    fetchTodolists, removeTodolistTC,
+    fetchTodolists,
+    removeTodolistTC,
     TodolistDomainType
 } from "./todolists-reducer";
 import {useAppDispatch, useAppSelector} from "../../state/state";
 import {FilterValuesType, TasksStateType} from "../../app/App";
-import {RequestStatusType} from "../../app/app-reducer";
 import {TaskStatuses} from "../../api/todolist-api";
 import {createTaskTC, removeTaskTC, updateTaskTC} from "./tasks-reducer";
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import {Container, Grid, Paper} from "@mui/material";
+import {Grid, Paper} from "@mui/material";
 import {AddItemForm} from "../../components/AddItemForm/AddItemForm";
 import {Todolist} from "./Todolist/Todolist";
+import {Navigate} from "react-router-dom";
 
 
-export const TodolistsList=()=> {
+export const TodolistsList = () => {
     const todolists = useAppSelector<TodolistDomainType[]>(state => state.todolists)
+
     const tasks = useAppSelector<TasksStateType>(state => state.tasks)
-    const status = useAppSelector<RequestStatusType>(state => state.app.status)
     const dispatch = useAppDispatch()
+    const isLogin = useAppSelector<boolean>(state => state.auth.isLogin)
 
     useEffect(() => {
+        if (!isLogin) {
+            return
+        }
         dispatch(fetchTodolists())
     }, [])
 
@@ -58,35 +61,39 @@ export const TodolistsList=()=> {
         dispatch(removeTodolistTC(todolistId))
     }, [])
 
+    if (!isLogin) {
+        debugger
+        return <Navigate to={'/login'}/>
+    }
 
     return <>
-                <Grid container style={{padding: '20px'}}>
-                    <AddItemForm addItem={addTodolist}/>
+        <Grid container style={{padding: '20px'}}>
+            <AddItemForm addItem={addTodolist}/>
+        </Grid>
+        <Grid container spacing={5}>
+            {todolists?.map(tl => {
+                return <Grid item key={tl.id}>
+                    <Paper style={{padding: '10px'}}>
+                        <Todolist
+                            key={tl.id}
+                            todolist={tl}
+                            tasks={tasks[tl.id]}
+                            removeTasks={removeTasks}
+                            changeFilterStatus={changeFilterStatus}
+                            addTask={addTask}
+                            changeStatusTask={changeStatusTask}
+                            removeTodolist={removeTodolist}
+                            changeTitleTask={changeTitleTask}
+                            changeTodolistTitle={changeTodolistTitle}
+                        />
+                    </Paper>
                 </Grid>
-                <Grid container spacing={5}>
-                    {todolists.map(tl => {
-                        return <Grid item key={tl.id}>
-                            <Paper style={{padding: '10px'}}>
-                                <Todolist
-                                    key={tl.id}
-                                    todolist={tl}
-                                    tasks={tasks[tl.id]}
-                                    removeTasks={removeTasks}
-                                    changeFilterStatus={changeFilterStatus}
-                                    addTask={addTask}
-                                    changeStatusTask={changeStatusTask}
-                                    removeTodolist={removeTodolist}
-                                    changeTitleTask={changeTitleTask}
-                                    changeTodolistTitle={changeTodolistTitle}
-                                />
-                            </Paper>
-                        </Grid>
-                    })
-                    }
-                </Grid>
+            })
+            }
+        </Grid>
 
-        </>
-    ;
+    </>
+        ;
 }
 
 
