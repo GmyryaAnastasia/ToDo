@@ -7,10 +7,13 @@ import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import {useFormik} from "formik";
-import {useAppDispatch, useAppSelector} from "../../state/state";
-import {loginTC} from "./auth-reducer";
+import {FormikHelpers, useFormik} from "formik";
+import {useAppSelector} from "app/store";
 import {Navigate} from "react-router-dom";
+import {useAppDispatch} from "common/hooks/useAppDispatch";
+import {authThunk} from "features/auth/auth.reducer";
+import {LoginPropsType} from "features/auth/auth.api";
+import {ResponseType} from "common/types";
 
 type FormikErrorType = {
     email?: string
@@ -19,8 +22,8 @@ type FormikErrorType = {
 }
 
 
-export const Login = () => {
-    const isLogin = useAppSelector<boolean>(state => state.auth.isLogin)
+export const Auth = () => {
+    const isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
     const dispatch = useAppDispatch()
     const formik = useFormik({
         initialValues: {
@@ -29,25 +32,35 @@ export const Login = () => {
             rememberMe: false
         },
         validate: (values) => {
-            const errors: FormikErrorType = {}
-            if (!values.email) {
-                errors.email = 'Email Required'
-            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-                errors.email = 'Invalid email address'
-            }
-
-            if (values.password.length <= 3) {
-                errors.password = 'Password should be more than 4'
-            }
-            return errors
+            // const errors: FormikErrorType = {}
+            // if (!values.email) {
+            //     errors.email = 'Email Required'
+            // } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+            //     errors.email = 'Invalid email address'
+            // }
+            //
+            // if (values.password.length <= 3) {
+            //     errors.password = 'Password should be more than 4'
+            // }
+            // return errors
         },
-        onSubmit: values => {
-            dispatch(loginTC(values))
-            formik.resetForm()
+        onSubmit: (values, formikHelpers: FormikHelpers<LoginPropsType>) => {
+            dispatch(authThunk.login(values))
+                .unwrap()
+                .catch((reason: ResponseType) => {
+                    debugger
+                    const {fieldsErrors} = reason
+                    if (fieldsErrors) {
+                        reason.fieldsErrors.forEach(fieldErrors => {
+                            formikHelpers.setFieldError(fieldErrors.field, fieldErrors.error)
+                        })
+                    }
+                })
+            // formik.resetForm()
         },
     })
-    if (isLogin) {
-        return <Navigate to ={'/'}/>
+    if (isLoggedIn) {
+        return <Navigate to={'/'}/>
     }
 
     return <Grid container justifyContent={'center'}>
